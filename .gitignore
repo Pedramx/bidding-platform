@@ -1,0 +1,57 @@
+# -----------------------
+# Maven / Java
+# -----------------------
+target/
+out/
+*.log
+*.class
+*.jar
+*.war
+*.ear
+
+# IntelliJ IDEA / Eclipse / NetBeans project files
+*.iml
+*.ipr
+*.iws
+*.idea/
+*.classpath
+*.project
+*.settings/
+*.factorypath
+
+# VSCode
+.vscode/
+
+# -----------------------
+# OS Generated
+# -----------------------
+.DS_Store
+*.swp
+*~
+
+# -----------------------
+# Docker
+# -----------------------
+**/docker-compose*.yml
+**/*.env
+docker.log
+docker-compose.override.yml
+
+# -----------------------
+# Terraform
+# -----------------------
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfvars
+override.tf
+override.tf.json
+crash.log
+.terraformrc
+terraform.rc
+
+# -----------------------
+# Secrets / Keys
+# -----------------------
+*.key
+*.pem
