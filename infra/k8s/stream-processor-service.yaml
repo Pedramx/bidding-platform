@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stream-processor-service
+  labels:
+    app: stream-processor-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: stream-processor-service
+  template:
+    metadata:
+      labels:
+        app: stream-processor-service
+    spec:
+      containers:
+        - name: stream-processor-service
+          image: pedbid/stream-processor-service:1.0.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "dev"
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stream-processor-service
+spec:
+  selector:
+    app: stream-processor-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP

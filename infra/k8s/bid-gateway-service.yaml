@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bid-gateway-service
+  labels:
+    app: bid-gateway-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bid-gateway-service
+  template:
+    metadata:
+      labels:
+        app: bid-gateway-service
+    spec:
+      containers:
+        - name: bid-gateway-service
+          image: pedbid/bid-gateway-service:1.0.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "dev"
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bid-gateway-service
+spec:
+  selector:
+    app: bid-gateway-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bid-engine-service
+  labels:
+    app: bid-engine-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bid-engine-service
+  template:
+    metadata:
+      labels:
+        app: bid-engine-service
+    spec:
+      containers:
+        - name: bid-engine-service
+          image: pedbid/bid-engine-service:1.0.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "dev"
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bid-engine-service
+spec:
+  selector:
+    app: bid-engine-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP

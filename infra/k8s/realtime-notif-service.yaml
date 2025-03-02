@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: realtime-notif-service
+  labels:
+    app: realtime-notif-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: realtime-notif-service
+  template:
+    metadata:
+      labels:
+        app: realtime-notif-service
+    spec:
+      containers:
+        - name: realtime-notif-service
+          image: pedbid/realtime-notif-service:1.0.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "dev"
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: realtime-notif-service
+spec:
+  selector:
+    app: realtime-notif-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP

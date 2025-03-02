@@ -1,11 +1,27 @@
-FROM eclipse-temurin:17-jdk-alpine as builder
+# --------- Builder Stage ---------
+FROM maven:3.8.3-openjdk-17 AS builder
+WORKDIR /build
 
-WORKDIR /app
-COPY pom.xml ./
-COPY src ./src
-RUN ./mvnw clean package -DskipTests
+# 1. Copy the entire repository to ensure the parent POM and all modules are visible to Maven
+COPY . .
 
-FROM eclipse-temurin:17-jre-alpine
+# 2. Build the entire monorepo, including domain-models
+RUN mvn clean install -DskipTests
+
+# 3. Switch to the bid-gateway-service module directory
+WORKDIR /build/services/bid-gateway-service
+
+# 4. Build the bid-gateway-service module (skip tests for faster builds)
+RUN mvn clean package -DskipTests
+
+# --------- Runtime Stage ---------
+FROM eclipse-temurin:17-jre
 WORKDIR /app
-COPY --from=builder /app/target/bid-gateway-service-*.jar app.jar
+
+# Copy the built JAR from the builder stage
+COPY --from=builder /build/services/bid-gateway-service/target/bid-gateway-service-*.jar app.jar
+
+# Expose the application port
+EXPOSE 8080
+
 ENTRYPOINT ["java", "-jar", "app.jar"]
